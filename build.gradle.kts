@@ -15,8 +15,6 @@ repositories {
 
 
 dependencies {
-    implementation("javafx-controls:19")
-    implementation("org.openjfx:javafx:19")
     testImplementation(kotlin("test"))
 }
 

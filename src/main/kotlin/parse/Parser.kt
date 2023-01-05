@@ -1,5 +1,6 @@
 package parse
 
+import java.math.BigDecimal
 import math.*
 import numbers.toNumber
 
@@ -53,9 +54,15 @@ class Parser {
 
     private fun parseExpression(iter: ListIterator<String>): Token {
         val next = iter.next()
+        //numbers
+        next.toDoubleOrNull()?.let {
+            return NumberTk(it.toNumber())
+        }
         next.toIntOrNull()?.let {
             return NumberTk(it.toNumber())
         }
+        //keyword should not apply in an expression
+        //An Exception would be ( ) but those are not implemented yet
         if (next in keywords)
             error("Keyword $next cannot be at this position")
         return Variable(next)

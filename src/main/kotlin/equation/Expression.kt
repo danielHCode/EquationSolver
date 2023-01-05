@@ -21,6 +21,7 @@ interface VarExpression : Expression {
     fun toLinearExpression(): LinearVarExpression
     fun toQuadraticExpression(): QuadraticVarExpression
     fun simplify(other: VarExpression): VarExpression
+    fun forX(x: Number): Number
 }
 
 class ConstExpression(override val num: NumType) : VarExpression {
@@ -36,6 +37,8 @@ class ConstExpression(override val num: NumType) : VarExpression {
         tier -> simplify(other as ConstExpression)
         else -> other.simplify(this)
     }
+
+    override fun forX(x: Number): Number = num
 
     fun simplify(other: ConstExpression) = ConstExpression(num-other.num)
 
@@ -61,6 +64,8 @@ class LinearVarExpression(override val num: NumType, override val child: ConstEx
         other.tier < tier -> LinearVarExpression(num, child.simplify(other as ConstExpression))
         else -> other.simplify(this)
     }
+
+    override fun forX(x: Number): Number = (num*x)+child.forX(x)
 
     fun simplify(other: LinearVarExpression) = LinearVarExpression(num-other.num, child.simplify(other.child))
 
@@ -103,6 +108,8 @@ class QuadraticVarExpression(override val num: NumType, override val child: Line
         other.tier == tier -> QuadraticVarExpression(num-other.num, child.simplify(other.child ?: error("invalid")).toLinearExpression())
         else -> other.simplify(this)
     }
+
+    override fun forX(x: Number): Number = (num*x*x)+child.forX(x)
 
     override fun toConstExpression(): ConstExpression = error("cannot convert quadratic to const")
 
